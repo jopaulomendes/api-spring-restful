@@ -15,8 +15,11 @@ public class Usuario implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	
 	private String login;
+	
 	private String senha;
+	
 	private String nome;
 
 	public Long getId() {
