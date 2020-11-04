@@ -53,9 +53,15 @@ public class IndexController {
 		
 		Usuario  usuarioSalvo = usuarioRepository.save(usuario);
 		
-		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);
+		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);		
+	}
+	
+	@PutMapping(value = "/", produces = "application/json")
+	public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
 		
+		Usuario  usuarioSalvo = usuarioRepository.save(usuario);
 		
+		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);		
 	}
 
 }
