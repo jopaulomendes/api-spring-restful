@@ -60,6 +60,14 @@ public class Usuario implements Serializable{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	
+	public List<Telefone> getTelefones() {
+		return telefones;
+	}
+	
+	public void setTelefones(List<Telefone> telefones) {
+		this.telefones = telefones;
+	}
 
 	@Override
 	public int hashCode() {
