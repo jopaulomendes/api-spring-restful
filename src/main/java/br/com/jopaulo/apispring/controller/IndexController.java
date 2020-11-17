@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.jopaulo.apispring.model.Usuario;
 import br.com.jopaulo.apispring.repository.UsuarioRepository;
 
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/usuario")
 public class IndexController {
