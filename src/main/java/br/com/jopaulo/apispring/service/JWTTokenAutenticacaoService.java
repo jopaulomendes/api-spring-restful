@@ -1,11 +1,11 @@
 package br.com.jopaulo.apispring.service;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class JWTTokenAutenticacaoService {
 	
 	private static final String HEADER_STRING = "Authorization";
 	
-	public void addAuthentication(HttpServletResponse response, String username) throws Exception {
+	public void addAuthentication(HttpServletResponse response, String username) throws IOException {
 		
 		String JWT = Jwts.builder()
 				.setSubject(username)
