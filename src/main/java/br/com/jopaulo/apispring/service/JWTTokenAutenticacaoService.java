@@ -29,17 +29,22 @@ public class JWTTokenAutenticacaoService {
 	
 	private static final String HEADER_STRING = "Authorization";
 	
+	// gera o token de autenticação e add ao cabeçalho e resposta http
 	public void addAuthentication(HttpServletResponse response, String username) throws IOException {
 		
+		// gera o token
 		String JWT = Jwts.builder()
 				.setSubject(username)
 				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET).compact();
 		
+		// junta o token com o prefixo
 		String token = TOKEN_PREFIX + " " + JWT;
 		
+		// add no cabeçalho http
 		response.addHeader(HEADER_STRING, token);
 		
+		// escreve o token como respota no corpo http
 		response.getWriter().write("{\"Authorization\": \""+token+"\"}");
 	}
 	
