@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +38,8 @@ public class IndexController {
 	}
 	
 	@GetMapping(value = "/{id}", produces = "application/json")
-	@Cacheable("cacheuser")
+	@CacheEvict(value = "cacheuser", allEntries = true)
+	@CachePut("cacheusuarios")
 	public ResponseEntity<Usuario> init(@PathVariable (value = "id") Long id) {
 		
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
@@ -53,12 +56,11 @@ public class IndexController {
 	}
 	
 	@GetMapping(value = "/", produces = "application/json")
-	@Cacheable("cacheusuarios")
+	@CacheEvict(value = "cacheusuarios", allEntries = true)
+	@CachePut("cacheusuarios")
 	public ResponseEntity<List<Usuario>> usuario() throws InterruptedException{
 		
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
-		
-		Thread.sleep(6000); // simula um atraso de 6 seg
 		
 		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
 	}

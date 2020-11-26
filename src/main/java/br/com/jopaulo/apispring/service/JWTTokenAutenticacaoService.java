@@ -21,7 +21,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JWTTokenAutenticacaoService {
 
-	private static final long EXPIRATION_TIME =	7200000; // 2 horas
+	private static final long EXPIRATION_TIME =	86400000; // 1 dia
 	
 	private static final String SECRET = "SenhaExtremamenteSecreta";
 	
