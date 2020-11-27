@@ -48,18 +48,29 @@ public class JWTTokenAutenticacaoService {
 		response.getWriter().write("{\"Authorization\": \""+token+"\"}");
 	}
 	
+	// retorna usuário válido com token ou null
 	public Authentication getAuthentication(HttpServletRequest request) {
 		
 		String token = request.getHeader(HEADER_STRING);
 		
 		if (token != null) {
-			String user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody().getSubject();
+			
+			String tokenLimpo = token.replace(TOKEN_PREFIX, "").trim();
+			
+			String user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(tokenLimpo).getBody().getSubject();
 			
 			if (user != null) {
 				Usuario usuario = ApplicationContextLoad.getApplicationContext().getBean(UsuarioRepository.class).findUserByLogin(user);
 				
 				if (usuario != null) {					
-					return new UsernamePasswordAuthenticationToken(usuario.getLogin(), usuario.getPassword(), usuario.getAuthorities());
+					
+					if (tokenLimpo.equalsIgnoreCase(usuario.getToken())) {
+						
+						return new UsernamePasswordAuthenticationToken(
+								usuario.getLogin(),
+								usuario.getPassword(),
+								usuario.getAuthorities());
+					}
 				}				
 			} 			
 		} 
