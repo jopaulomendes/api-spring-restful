@@ -1,4 +1,4 @@
-package br.com.jopaulo.apispring.service;
+package br.com.jopaulo.apispring.security;
 
 import java.io.IOException;
 import java.util.Date;
@@ -32,7 +32,7 @@ public class JWTTokenAutenticacaoService {
 	// gera o token de autenticação e add ao cabeçalho e resposta http
 	public void addAuthentication(HttpServletResponse response, String username) throws IOException {
 		
-		// gera o token
+		// monta o token
 		String JWT = Jwts.builder()
 				.setSubject(username)
 				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -44,12 +44,15 @@ public class JWTTokenAutenticacaoService {
 		// add no cabeçalho http
 		response.addHeader(HEADER_STRING, token);
 		
+		// libera resposta para portas diferentes que usam a api ou clientes web
+		liberacaoCors(response);
+		
 		// escreve o token como respota no corpo http
 		response.getWriter().write("{\"Authorization\": \""+token+"\"}");
 	}
 	
 	// retorna usuário válido com token ou null
-	public Authentication getAuthentication(HttpServletRequest request) {
+	public Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		
 		String token = request.getHeader(HEADER_STRING);
 		
@@ -75,6 +78,27 @@ public class JWTTokenAutenticacaoService {
 			} 			
 		} 
 		
+		liberacaoCors(response);
+		
 		return null;
+	}
+
+	private void liberacaoCors(HttpServletResponse response) {
+
+		if (response.getHeader("Access-Control-Allow-Origin") == null) {
+			response.addHeader("Access-Control-Allow-Origin", "*");		
+		}
+		
+		if (response.getHeader("Access-Control-Allow-Headers") == null) {
+			response.addHeader("Access-Control-Allow-Headers", "*");		
+		}
+		
+		if (response.getHeader("Access-Control-Request-Headers") == null) {
+			response.addHeader("Access-Control-Request-Headers", "*");		
+		}
+		
+		if (response.getHeader("Access-Control-Allow-Methods") == null) {
+			response.addHeader("Access-Control-Allow-Methods", "*");		
+		}
 	}
 }

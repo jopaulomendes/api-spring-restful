@@ -2,6 +2,7 @@ package br.com.jopaulo.apispring.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,13 +24,21 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
+		// ativa a proteção contra usuários que não estão validados por token
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-			.disable().authorizeRequests().antMatchers("/").permitAll()
-			.antMatchers("/index").permitAll()
-			.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
-			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-			.and().addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(new JWTAPIAutenticacaoFilter(), UsernamePasswordAuthenticationFilter.class);		
+		// ativa a permissão para acesso da página inicial (login)
+		.disable().authorizeRequests().antMatchers("/").permitAll()
+		.antMatchers("/index").permitAll()
+		// liberando CORS
+		.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+		// redireciona para a página de login após o usuário fazer o logout
+		.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
+		// invalida o usuário
+		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+		// filtra requisições de login para autenticação
+		.and().addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+		// Filtra demais requisições para verificar a presença do TOKEN JWT no HEADER HTTP
+		.addFilterBefore(new JWTAPIAutenticacaoFilter(), UsernamePasswordAuthenticationFilter.class);		
 	}
 	
 	@Override

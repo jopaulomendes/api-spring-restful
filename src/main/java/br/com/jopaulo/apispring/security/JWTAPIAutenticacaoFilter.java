@@ -7,12 +7,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
-
-import br.com.jopaulo.apispring.service.JWTTokenAutenticacaoService;
 
 public class JWTAPIAutenticacaoFilter extends GenericFilterBean{
 
@@ -20,7 +19,8 @@ public class JWTAPIAutenticacaoFilter extends GenericFilterBean{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		Authentication authentication = new JWTTokenAutenticacaoService().getAuthentication((HttpServletRequest) request);
+		//estabelece a autenticação para a requisição
+		Authentication authentication = new JWTTokenAutenticacaoService().getAuthentication((HttpServletRequest) request, (HttpServletResponse) response);
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
