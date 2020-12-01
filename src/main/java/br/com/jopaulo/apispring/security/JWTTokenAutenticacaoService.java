@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.BeansException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,8 +15,12 @@ import org.springframework.stereotype.Service;
 import br.com.jopaulo.apispring.ApplicationContextLoad;
 import br.com.jopaulo.apispring.model.Usuario;
 import br.com.jopaulo.apispring.repository.UsuarioRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 @Service
 @Component
@@ -56,26 +61,32 @@ public class JWTTokenAutenticacaoService {
 		
 		String token = request.getHeader(HEADER_STRING);
 		
-		if (token != null) {
-			
-			String tokenLimpo = token.replace(TOKEN_PREFIX, "").trim();
-			
-			String user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(tokenLimpo).getBody().getSubject();
-			
-			if (user != null) {
-				Usuario usuario = ApplicationContextLoad.getApplicationContext().getBean(UsuarioRepository.class).findUserByLogin(user);
+		try {
+			if (token != null) {
 				
-				if (usuario != null) {					
+				String tokenLimpo = token.replace(TOKEN_PREFIX, "").trim();
+				
+				String user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(tokenLimpo).getBody().getSubject();
+				
+				if (user != null) {
+					Usuario usuario = ApplicationContextLoad.getApplicationContext().getBean(UsuarioRepository.class).findUserByLogin(user);
 					
-					if (tokenLimpo.equalsIgnoreCase(usuario.getToken())) {
+					if (usuario != null) {					
 						
-						return new UsernamePasswordAuthenticationToken(
-								usuario.getLogin(),
-								usuario.getPassword(),
-								usuario.getAuthorities());
-					}
-				}				
-			} 			
+						if (tokenLimpo.equalsIgnoreCase(usuario.getToken())) {
+							
+							return new UsernamePasswordAuthenticationToken(
+									usuario.getLogin(),
+									usuario.getPassword(),
+									usuario.getAuthorities());
+						}
+					}				
+				} 			
+			}
+		} catch (ExpiredJwtException e) {
+			try {
+				response.getOutputStream().println("Sua sessão expirou.  Efetue login novamente");
+			} catch (IOException e1) {}
 		} 
 		
 		liberacaoCors(response);
