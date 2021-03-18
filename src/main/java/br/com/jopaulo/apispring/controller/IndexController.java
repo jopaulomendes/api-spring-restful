@@ -1,5 +1,11 @@
 package br.com.jopaulo.apispring.controller;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +24,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.gson.Gson;
 
 import br.com.jopaulo.apispring.model.Usuario;
 import br.com.jopaulo.apispring.model.UsuarioDTO;
@@ -67,11 +75,36 @@ public class IndexController {
 	}
 	
 	@PostMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
+	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) throws Exception {
 		
 		for (int pos = 0; pos < usuario.getTelefones().size(); pos++) {
 			usuario.getTelefones().get(pos).setUsuario(usuario);
 		}
+		
+//		************** consumindo api externa de cep *******************
+		URL url = new URL("https://viacep.com.br/ws/"+ usuario.getCep() +"/json/");
+		URLConnection connection = url.openConnection();
+		InputStream inputStream = connection.getInputStream();
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+		
+		String cep = "";
+		StringBuilder jsonCep = new StringBuilder();
+		
+		while ((cep = bufferedReader.readLine()) != null) {
+			jsonCep.append(cep);
+			
+		}
+		
+		//converte os dados da api externa para a classe usuário
+		Usuario userAux = new Gson().fromJson(jsonCep.toString(), Usuario.class);  		
+		usuario.setCep(userAux.getCep());
+		usuario.setLogradouro(userAux.getLogradouro());
+		usuario.setComplemento(userAux.getComplemento());
+		usuario.setBairro(userAux.getBairro());
+		usuario.setLocalidade(userAux.getLocalidade());
+		usuario.setUf(userAux.getUf());
+		usuario.setDdd(userAux.getDdd());
+//		*************** consumindo api externa de cep ****************************
 		
 		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
 		usuario.setSenha(senhaCriptografada);
