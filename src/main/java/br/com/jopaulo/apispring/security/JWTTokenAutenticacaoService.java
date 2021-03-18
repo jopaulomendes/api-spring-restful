@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.BeansException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -17,10 +16,7 @@ import br.com.jopaulo.apispring.model.Usuario;
 import br.com.jopaulo.apispring.repository.UsuarioRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 
 @Service
 @Component
@@ -48,6 +44,8 @@ public class JWTTokenAutenticacaoService {
 		
 		// add no cabeçalho http
 		response.addHeader(HEADER_STRING, token);
+		
+		ApplicationContextLoad.getApplicationContext().getBean(UsuarioRepository.class).atualizaTokenUser(JWT, username);
 		
 		// libera resposta para portas diferentes que usam a api ou clientes web
 		liberacaoCors(response);
