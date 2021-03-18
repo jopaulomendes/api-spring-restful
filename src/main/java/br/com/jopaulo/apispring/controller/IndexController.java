@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jopaulo.apispring.model.Usuario;
+import br.com.jopaulo.apispring.model.UsuarioDTO;
 import br.com.jopaulo.apispring.repository.UsuarioRepository;
 
 @RestController
@@ -40,11 +41,11 @@ public class IndexController {
 	@GetMapping(value = "/{id}", produces = "application/json")
 	@CacheEvict(value = "cacheuser", allEntries = true)
 	@CachePut("cacheusuarios")
-	public ResponseEntity<Usuario> init(@PathVariable (value = "id") Long id) {
+	public ResponseEntity<UsuarioDTO> init(@PathVariable (value = "id") Long id) {
 		
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
 		
-		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+		return new ResponseEntity<UsuarioDTO>(new UsuarioDTO(usuario.get()), HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/{id}", produces = "application/text")
