@@ -45,6 +45,9 @@ public class JWTTokenAutenticacaoService {
 		// add no cabeçalho http
 		response.addHeader(HEADER_STRING, token);
 		
+		// liberando resposta para porta diferenre do projeto angular
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		
 		ApplicationContextLoad.getApplicationContext().getBean(UsuarioRepository.class).atualizaTokenUser(JWT, username);
 		
 		// libera resposta para portas diferentes que usam a api ou clientes web
