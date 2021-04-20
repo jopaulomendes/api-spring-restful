@@ -47,7 +47,7 @@ public class JWTTokenAutenticacaoService {
 		
 		// liberando resposta para porta diferenre do projeto angular
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		
+	
 		ApplicationContextLoad.getApplicationContext().getBean(UsuarioRepository.class).atualizaTokenUser(JWT, username);
 		
 		// libera resposta para portas diferentes que usam a api ou clientes web
@@ -90,9 +90,8 @@ public class JWTTokenAutenticacaoService {
 			} catch (IOException e1) {}
 		} 
 		
-		liberacaoCors(response);
-		
-		return null;
+		liberacaoCors(response);		
+		return null; //não aoutorizado
 	}
 
 	private void liberacaoCors(HttpServletResponse response) {
