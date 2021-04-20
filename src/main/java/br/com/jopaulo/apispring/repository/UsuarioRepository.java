@@ -16,7 +16,7 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 	@Query("select u from Usuario u where u.login = ?1")
 	Usuario findUserByLogin(String login);
 	
-	@Query("select u from Usuario u where u.nome like %?1%")
+	@Query("select u from Usuario u where lower(u.nome) like lower ('%'||?1||'%')") // ignore case
 	List<Usuario> findUserByNome(String nome);
 	
 	@Transactional
