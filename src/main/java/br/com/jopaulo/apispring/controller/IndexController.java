@@ -59,7 +59,7 @@ public class IndexController {
 		
 		usuarioRepository.deleteById(id);
 		
-		return "Usuário deletado com sucesso";
+		return "Usuário de código " + id + " deletado com sucesso";
 	}
 	
 	@GetMapping(value = "/", produces = "application/json")
@@ -91,28 +91,28 @@ public class IndexController {
 		}
 		
 //		************** consumindo api externa de cep *******************
-		URL url = new URL("https://viacep.com.br/ws/"+ usuario.getCep() +"/json/");
-		URLConnection connection = url.openConnection();
-		InputStream inputStream = connection.getInputStream();
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-		
-		String cep = "";
-		StringBuilder jsonCep = new StringBuilder();
-		
-		while ((cep = bufferedReader.readLine()) != null) {
-			jsonCep.append(cep);
-			
-		}
+//		URL url = new URL("https://viacep.com.br/ws/"+ usuario.getCep() +"/json/");
+//		URLConnection connection = url.openConnection();
+//		InputStream inputStream = connection.getInputStream();
+//		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+//		
+//		String cep = "";
+//		StringBuilder jsonCep = new StringBuilder();
+//		
+//		while ((cep = bufferedReader.readLine()) != null) {
+//			jsonCep.append(cep);
+//			
+//		}
 		
 		//converte os dados da api externa para a classe usuário
-		Usuario userAux = new Gson().fromJson(jsonCep.toString(), Usuario.class);  		
-		usuario.setCep(userAux.getCep());
-		usuario.setLogradouro(userAux.getLogradouro());
-		usuario.setComplemento(userAux.getComplemento());
-		usuario.setBairro(userAux.getBairro());
-		usuario.setLocalidade(userAux.getLocalidade());
-		usuario.setUf(userAux.getUf());
-		usuario.setDdd(userAux.getDdd());
+//		Usuario userAux = new Gson().fromJson(jsonCep.toString(), Usuario.class);  		
+//		usuario.setCep(userAux.getCep());
+//		usuario.setLogradouro(userAux.getLogradouro());
+//		usuario.setComplemento(userAux.getComplemento());
+//		usuario.setBairro(userAux.getBairro());
+//		usuario.setLocalidade(userAux.getLocalidade());
+//		usuario.setUf(userAux.getUf());
+//		usuario.setDdd(userAux.getDdd());
 //		*************** consumindo api externa de cep ****************************
 		
 		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
@@ -129,7 +129,7 @@ public class IndexController {
 			usuario.getTelefones().get(pos).setUsuario(usuario);
 		}
 		
-		Usuario userTemporario = usuarioRepository.findUserByLogin(usuario.getLogin());
+		Usuario userTemporario = usuarioRepository.findById(usuario.getId()).get();
 		
 		if (!userTemporario.getSenha().equals(usuario.getSenha())) {
 			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());

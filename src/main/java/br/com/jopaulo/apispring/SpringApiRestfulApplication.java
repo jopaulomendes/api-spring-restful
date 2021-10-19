@@ -27,7 +27,7 @@ public class SpringApiRestfulApplication implements WebMvcConfigurer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringApiRestfulApplication.class, args);
-		System.out.println(new BCryptPasswordEncoder().encode("1234"));
+		System.out.println(new BCryptPasswordEncoder().encode("12345"));
 	}
 	
 	@Override
