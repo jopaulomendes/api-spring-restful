@@ -2,16 +2,8 @@ package br.com.jopaulo.apispring;
 
 public class ObjetoErro {
 
-	private String Error;
+	private String error;
 	private String code;
-
-	public String getError() {
-		return Error;
-	}
-
-	public void setError(String error) {
-		Error = error;
-	}
 
 	public String getCode() {
 		return code;
@@ -19,6 +11,14 @@ public class ObjetoErro {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
 	}
 
 }
